@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Application – CapitalFlow Solutions</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    :root {
+      --primary-color: #159FBA;
+      --accent-color: #00cc99;
+      --dark-color: #094970;
+      --hero-gradient: linear-gradient(180deg, #ffffff 0%, #f0f8ff 100%);
+      --font-sans: 'Poppins', sans-serif;
+      --error-color: #FF7D8C;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: var(--font-sans); 
+      color: #333;
+      background: url('cpf-bg.png') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    .hero { 
+      padding: 4rem 2rem;
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      gap: 4rem;
+    }
+
+    .hero-content {
+      flex: 1;
+      text-align: left;
+      padding-top: 2rem;
+    }
+
+    .hero .logo { 
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    .hero .logo img {
+      height: 64px;
+      width: auto;
+    }
+
+    .hero h1 { 
+      font-size: 3rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem;
+      background: linear-gradient(to right, #00CCE1, #16B2D0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+      text-align: left;
+    }
+
+    .hero p { 
+      font-size: 0.8rem; 
+      max-width: 500px; 
+      margin: 0 0 2rem 0;
+      color: var(--dark-color);
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .hero .ssl-tag { 
+      display: inline-block;
+      padding: 0.2rem 1.5rem;
+      border: 1px solid #0bbdca;
+      border-radius: 50px;
+      background: linear-gradient(to right, #00CCE1, #16B2D0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+    }
+
+    .form-card {
+      width: 500px;
+      flex-shrink: 0;
+      padding: 3rem;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      box-shadow: 0 4px 15px rgba(0, 73, 66, 0.1);
+    }
+
+    @media (max-width: 1200px) {
+      .hero {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+      }
+
+      .hero-content {
+        text-align: center;
+        padding-top: 0;
+      }
+
+      .hero .logo {
+        justify-content: center;
+      }
+
+      .hero h1, .hero p {
+        text-align: center;
+      }
+
+      .hero p {
+        margin: 0 auto 2rem;
+      }
+
+      .form-card {
+        width: 100%;
+        max-width: 500px;
+      }
+    }
+
+    .progress-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      margin-bottom: 1.5rem;
+    }
+    .progress-bar { 
+      flex: 1;
+      height: 6px; 
+      background: #f4f4f4; 
+      border-radius: 3px; 
+      overflow: hidden;
+    }
+    .progress { 
+      height: 100%; 
+      width: 0; 
+      background: linear-gradient(to right, #00CCE1, #16B2D0);
+      transition: width .3s; 
+      border-radius: 3px; 
+    }
+    .lang-switcher {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: white;
+      border: none;
+      box-shadow: 0 4px 15px rgba(0, 73, 66, 0.1);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--primary-color);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .lang-switcher:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 73, 66, 0.15);
+    }
+    .slide { display: none; }
+    .slide.active { display: block; }
+    .form-group { margin-bottom: 1rem; text-align: left; }
+    .form-group label { 
+      display: block; 
+      margin-bottom: .5rem; 
+      font-size: .8rem; 
+      font-weight: 600; 
+    }
+    .form-group input, .form-group select, #sig-canvas {
+      width: 4%;
+      padding: .75rem;
+      border: 1px solid #c3dddf;
+      border-radius: .5rem;
+      font-size: 0.9rem;
+      transition: border-color .3s;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: var(--primary-color); outline: none; }
+    .form-group input.error, .form-group select.error { 
+      border-color: var(--error-color); 
+      animation: shake 0.2s ease-in-out;
+    }
+    .radio-group { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+    .radio-group label { flex: 1; cursor: pointer; border: 1px solid #ccc; border-radius: .5rem; padding: .75rem; text-align: center; transition: border-color .3s, color .3s; }
+    .radio-group input { display: none; }
+    .radio-group label input:checked + span, .radio-group label span.selected { color: var(--primary-color); }
+    .radio-group label:has(input:checked) { border: 1px solid var(--primary-color); background: #ebffff;}
+    .terms-group { 
+      display: flex; 
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+    
+    .terms-group input[type="checkbox"] {
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .terms-group label {
+      margin: 0;
+      font-size: 0.8rem;
+      font-weight: 500;
+      line-height: 1.2;
+      width: 100%;
+    }
+
+    .toggle-switch { 
+      display: inline-block; 
+      position: relative; 
+      width: 50px; 
+      height: 24px;
+      margin: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 34px; transition: .4s; }
+    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .4s; }
+    .toggle-switch input:checked + .slider { background: var(--primary-color); }
+    .toggle-switch input:checked + .slider:before { transform: translateX(26px); }
+    .buttons { 
+      display: flex; 
+      justify-content: space-between; 
+      margin-top: 1.5rem; 
+      gap: 0.5rem;
+    }
+    .btn-back, .btn-next, .btn-clear { 
+      padding: .75rem 1.5rem; 
+      border: none; 
+      border-radius: .5rem; 
+      font-size: 0.9rem; 
+      font-weight: 600; 
+      cursor: pointer;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-back { 
+      background: #e7f3f4; 
+      color: #333; 
+      flex: 1; 
+    }
+    .btn-next { 
+      background: linear-gradient(to right, #00CCE1, #16B2D0);
+      color: #fff; 
+      flex: 2;
+    }
+    .btn-clear { background: #e7f3f4; color: #333; margin-top: .5rem; width: 100%; }
+    .btn-next:disabled { opacity: .6; cursor: not-allowed; }
+    .terms-group input { margin-right: .5rem; }
+    @media (max-width:600px) { .buttons { flex-direction: column; } .btn-back { margin:0 0 .5rem; } }
+
+    /* New styles for features section */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 2rem auto !important;
+      padding: 2rem 2rem 0rem 2rem !important;
+      text-align: center;
+    }
+    
+    .feature {
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+    
+    .feature:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 122, 135, 0.1);
+    }
+    
+    .feature h3 {
+      font-size: 2.5rem;
+      background: linear-gradient(to right, #00CCE1, #16B2D0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.3rem;
+      font-weight: 700;
+    }
+    
+    .feature p {
+      color: var(--dark-color);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    
+    /* Footer styles */
+    footer {
+      padding: 0rem 0rem 1rem 2rem;
+      text-align: center;
+      margin-top: 4rem;
+    }
+
+    footer .footer-logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    footer .footer-logo img {
+      height: 40px;
+      width: auto;
+      opacity: 0.8;
+    }
+
+    footer .legal-text {
+      font-size: 0.6rem;
+      color: var(--dark-color);
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    footer .legal-text p {
+      margin-bottom: 1rem;
+    }
+
+    footer .legal-text .security-note,
+    footer .legal-text .acknowledgment {
+      font-weight: 600;
+    }
+
+    footer .legal-text .company-name {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    footer .copyright {
+      font-size: 0.6rem;
+      color: var(--dark-color);
+      border-top: 1px solid rgba(0,0,0,0.1);
+      padding-top: 1rem;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    footer .copyright .company-name {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    footer .copyright a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    footer .copyright span {
+      margin: 0 0.5rem;
+      color: #ccc;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .features {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      .feature {
+        padding: 1.5rem;
+      }
+      
+      .feature h3 {
+        font-size: 2rem;
+      }
+      .hero h1,
+      .financing-title h2 {
+        font-size: 2.5rem;
+      }
+    }
+
+    /* Features section styles */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+      text-align: center;
+    }
+
+    /* Financing Options section */
+    .financing-options {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 0 2rem;
+    }
+
+    .financing-title {
+      margin-bottom: 4rem;
+      margin-top: 7rem;
+      text-align: center;
+    }
+
+    .financing-title h2 {
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .financing-title h2 .gradient-text {
+      background: linear-gradient(to right, #00CCE1, #16B2D0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: block;
+    }
+
+    .financing-title h2 .dark-text {
+      color: var(--dark-color);
+      display: block;
+    }
+
+    .financing-title p {
+      font-size: 0.9rem;
+      color: var(--dark-color);
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .financing-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .financing-item {
+      position: relative;
+      padding: 2.5rem;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 1px solid rgba(0, 204, 225, 0.1);
+    }
+
+    .financing-item:hover {
+      transform: translateY(-5px);
+      border-color: rgba(0, 204, 225, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 73, 66, 0.08);
+    }
+
+    .financing-icon {
+      width: 80px;
+      height: 80px;
+      background: rgba(0, 204, 225, 0.05);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+      transform: rotate(0deg);
+      transition: all 0.3s ease;
+    }
+
+    .financing-item:hover .financing-icon {
+      transform: rotate(5deg) scale(1.05);
+      background: rgba(0, 204, 225, 0.1);
+    }
+
+    .financing-icon img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .financing-content {
+      text-align: center;
+      width: 100%;
+    }
+
+    .financing-content h3 {
+      background: linear-gradient(to right, #00CCE1, #16B2D0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 1.2rem;
+      margin-bottom: 0.6rem;
+      font-weight: 700;
+    }
+
+    .financing-content p {
+      color: var(--dark-color);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+
+    .financing-features {
+      display: flex;
+      flex-direction: column;
+      gap: 0rem;
+      width: 100%;
+      position: relative;
+      padding-top: 2rem;
+    }
+
+    .financing-features:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(to right, #00CCE1, #16B2D0);
+      border-radius: 2px;
+    }
+
+    .financing-feature {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      font-size: 0.85rem;
+      color: var(--dark-color);
+      padding: 0.3rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+
+
+    .financing-feature svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      color: #00CCE1;
+    }
+
+    @media (max-width: 768px) {
+      .financing-item {
+        padding: 2rem;
+      }
+
+      .financing-icon {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 1.5rem;
+      }
+
+      .financing-icon img {
+        width: 36px;
+        height: 36px;
+      }
+    }
+
+    /* Update the link styles */
+    footer .legal-text a.company-name,
+    footer .copyright a.company-name {
+      text-decoration: none;
+      font-weight: 600;
+      color: var(--primary-color);
+      transition: color 0.2s ease;
+    }
+
+    footer .legal-text a.company-name:hover,
+    footer .copyright a.company-name:hover {
+      color: #16B2D0;
+    }
+
+    .signature-pad-container {
+      width: 100%;
+      height: 220px;
+      margin-bottom: 0.5rem;
+      border: 2px solid #d8effd;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    #signatureCanvas {
+      width: 100%;
+      height: 100%;
+      background: white;
+      cursor: crosshair;
+    }
+
+    /* Override width for non-checkbox inputs */
+    .form-group input:not([type="checkbox"]), 
+    .form-group select, 
+    #sig-canvas {
+      width: 100%;
+    }
+
+    /* Address toggle specific styles */
+    .address-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .address-toggle label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .address-toggle .toggle-switch {
+      margin-left: auto;
+    }
+
+    .benefits-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .benefits-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--dark-color);
+      font-weight: 400;
+    }
+
+    .benefits-list li svg {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      color: #00CCE1;
+    }
+
+    .reviews-section {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 2rem 0rem 3rem 0;
+    }
+
+    .avatar-stack {
+      display: flex;
+      align-items: center;
+    }
+
+    .avatar-stack img {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid white;
+      margin-right: -10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .stars {
+      display: flex;
+      gap: 2px;
+      color: #FFD700;
+      font-size: 0.9rem;
+      margin-left: 6px;
+    }
+
+    .review-text {
+      color: var(--dark-color);
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    .benefits-cards {
+      display: flex;
+      gap: 1rem;
+      max-width: 1200px;
+      margin: 6rem auto;
+      padding: 1rem 2rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .benefits-cards::-webkit-scrollbar {
+      display: none;
+    }
+
+    .benefit-card {
+      flex: 1;
+      min-width: 200px;
+      padding: 2rem 1.5rem;
+      background: white;
+      border: 1px solid #E5F8FA;
+      border-radius: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .benefit-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 204, 225, 0.1);
+    }
+
+    .benefit-card h3 {
+      color: #00CCE1;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .benefit-card p {
+      color: var(--dark-color);
+      font-size: 0.7rem;
+      line-height: 1.8;
+      margin: 0;
+      font-weight: 600;
+    }
+
+    @media (max-width: 1024px) {
+      .benefits-cards {
+        padding-bottom: 1rem;
+      }
+      
+      .benefit-card {
+        min-width: 280px;
+      }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
+</head>
+<body>
+  <section class="hero">
+    <div class="hero-content">
+      <div class="logo">
+        <img src="CPF-LOGO-TRACE-SMALL.svg" alt="CapitalFlow Solutions Logo">
+      </div>
+      <h1>Fast, Flexible Funding for Your Business</h1>
+      <p>Apply in minutes, and get up to $800,000 for your business—approved and funded in just 24 hours.</p>
+      <ul class="benefits-list">
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          Get funded in less than 24 hours
+        </li>
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          Customized funding plans tailored to your business
+        </li>
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          Access to our Montreal team, call anytime
+        </li>
+        <li>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          No equity dilution
+        </li>
+      </ul>
+
+      <div class="reviews-section">
+        <div class="avatar-stack">
+          <img src="https://i.pravatar.cc/100?img=1" alt="Customer">
+          <img src="https://i.pravatar.cc/100?img=2" alt="Customer">
+          <img src="https://i.pravatar.cc/100?img=3" alt="Customer">
+          <img src="https://i.pravatar.cc/100?img=4" alt="Customer">
+          <img src="https://i.pravatar.cc/100?img=5" alt="Customer">
+        </div>
+        <div class="stars">
+          <span>⭐</span>
+          <span>⭐</span>
+          <span>⭐</span>
+          <span>⭐</span>
+          <span>⭐</span>
+        </div>
+        <span class="review-text">Loved by 20K+ customers</span>
+      </div>
+
+      <div class="ssl-tag">🔒 Protected by bank level security</div>
+    </div>
+    <div class="form-card">
+      <div class="progress-wrapper">
+        <div class="progress-bar"><div class="progress" id="progress"></div></div>
+        <button type="button" class="lang-switcher" id="langSwitch">EN</button>
+      </div>
+      <form id="multiForm" novalidate>
+        <!-- Slide 1 -->
+        <div class="slide active" data-step="1">
+          <div class="form-group"><label for="firstName">First Name</label><input type="text" id="firstName" name="firstName" required></div>
+          <div class="form-group"><label for="lastName">Last Name</label><input type="text" id="lastName" name="lastName" required></div>
+          <div class="form-group"><label for="email">Email</label><input type="email" id="email" name="email" required></div>
+          <div class="form-group"><label for="phone">Phone Number</label><input type="tel" id="phone" name="phone" required></div>
+          <div class="form-group"><label for="dob">Date of Birth</label><input type="date" id="dob" name="dob" required></div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="slide" data-step="2">
+          <div class="form-group"><label for="bizName">Business Name</label><input type="text" id="bizName" name="bizName" required></div>
+          <div class="form-group"><label for="legalName">Legal Business Name</label><input type="text" id="legalName" name="legalName" required></div>
+          <div class="form-group"><label for="industry">Business Industry</label><select id="industry" name="industry" required><option value="">Select industry</option><option>Retail</option><option>Food & Beverage</option><option>Technology</option><option>Transportation</option></select></div>
+          <div class="form-group"><label for="gst">GST Number</label><input type="text" id="gst" name="gst" required></div>
+        </div>
+        <!-- Slide 3 -->
+        <div class="slide" data-step="3">
+          <div class="form-group"><label>Annual Revenue</label><div class="radio-group">
+              <label><input type="radio" name="revenue" value="<100k" required><span>Under $100k</span></label>
+              <label><input type="radio" name="revenue" value="100k-500k"><span>$100k–$500k</span></label>
+              <label><input type="radio" name="revenue" value="500k-1m"><span>$500k–$1M</span></label>
+              <label><input type="radio" name="revenue" value="1m-5m"><span>$1M–$5M</span></label>
+              <label><input type="radio" name="revenue" value=">5m"><span>Over $5M</span></label>
+            </div></div>
+          <div class="form-group"><label>Time in Business</label><div class="radio-group">
+              <label><input type="radio" name="timeBiz" value="<1" required><span><1 year</span></label>
+              <label><input type="radio" name="timeBiz" value="1-3"><span>1–3 years</span></label>
+              <label><input type="radio" name="timeBiz" value=">3"><span>>3 years</span></label>
+            </div></div>
+        </div>
+        <!-- Slide 4 -->
+        <div class="slide" data-step="4">
+          <div class="address-toggle">
+            <label for="sameAddress">Use home address for business</label>
+            <label class="toggle-switch">
+              <input type="checkbox" id="sameAddress" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <h4>Home Address</h4>
+          <div class="form-group"><label for="homeStreet">Street</label><input type="text" id="homeStreet" name="homeStreet" required></div>
+          <div class="form-group"><label for="homeCity">City</label><input type="text" id="homeCity" name="homeCity" required></div>
+          <div class="form-group"><label for="homeState">Province/State</label><input type="text" id="homeState" name="homeState" required></div>
+          <div class="form-group"><label for="homeZip">Postal/Zip</label><input type="text" id="homeZip" name="homeZip" required></div>
+          <div id="bizAddressFields">
+            <h4>Business Address</h4>
+            <div class="form-group"><label for="bizStreet">Street</label><input type="text" id="bizStreet" name="bizStreet"></div>
+            <div class="form-group"><label for="bizCity">City</label><input type="text" id="bizCity" name="bizCity"></div>
+            <div class="form-group"><label for="bizState">Province/State</label><input type="text" id="bizState" name="bizState"></div>
+            <div class="form-group"><label for="bizZip">Postal/Zip</label><input type="text" id="bizZip" name="bizZip"></div>
+          </div>
+        </div>
+        <!-- Slide 5 -->
+        <div class="slide" data-step="5">
+          <div class="form-group">
+            <div class="terms-group">
+              <input type="checkbox" id="terms" name="terms" required>
+              <label for="terms">I accept the Terms & Conditions</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Signature</label>
+            <div class="signature-pad-container">
+              <canvas id="signatureCanvas"></canvas>
+            </div>
+            <button type="button" class="btn-clear" id="clearBtn">Clear Signature</button>
+          </div>
+        </div>
+        <div class="buttons">
+          <button type="button" class="btn-back" id="backBtn">Back</button>
+          <button type="button" class="btn-next" id="nextBtn">Next</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section id="features" class="features">
+    <div class="feature">
+      <h3>24h</h3>
+      <p>Average Funding Time</p>
+    </div>
+    <div class="feature">
+      <h3>98%</h3>
+      <p>Client Satisfaction Rate</p>
+    </div>
+    <div class="feature">
+      <h3>Up to $800K</h3>
+      <p>Funding Available</p>
+    </div>
+  </section>
+
+  <section class="financing-options">
+    <div class="financing-title">
+      <h2>
+        <span class="gradient-text">Choose the Financing Option</span>
+        <span class="dark-text">That Fits Your Goals</span>
+      </h2>
+      <p>From business loans to equipment financing, we offer flexible and tailored solutions designed to meet your unique needs. Get the funding you need to grow quickly and hassle-free.</p>
+    </div>
+    <div class="financing-grid">
+      <div class="financing-item">
+        <div class="financing-icon">
+          <img src="mca.svg" alt="Merchant Cash Advance Icon">
+        </div>
+        <div class="financing-content">
+          <h3>Merchant Cash Advance</h3>
+          <p>Advance Cash Against Your Future Sales.</p>
+          <div class="financing-features">
+            <div class="financing-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Quick approval process</span>
+            </div>
+            <div class="financing-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Flexible repayment terms</span>
+            </div>
+            <div class="financing-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>No fixed monthly payments</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="financing-item">
+        <div class="financing-icon">
+          <img src="loc.svg" alt="Line of Credit Icon">
+        </div>
+        <div class="financing-content">
+          <h3>Line Of Credit</h3>
+          <p>Access Funds Whenever Your Business Needs.</p>
+          <div class="financing-features">
+            <div class="financing-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Revolving credit facility</span>
+            </div>
+            <div class="financing-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Draw funds as needed</span>
+            </div>
+            <div class="financing-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Competitive interest rates</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="financing-item">
+        <div class="financing-icon">
+          <img src="invoice.svg" alt="Invoice Factoring Icon">
+        </div>
+        <div class="financing-content">
+          <h3>Invoice Factoring</h3>
+          <p>Turn Unpaid Invoices Into Instant Cash.</p>
+          <div class="financing-features">
+            <div class="financing-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Immediate working capital</span>
+            </div>
+            <div class="financing-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>No debt on balance sheet</span>
+            </div>
+            <div class="financing-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Professional collections service</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="financing-item">
+        <div class="financing-icon">
+          <img src="equipment.svg" alt="Equipment Financing Icon">
+        </div>
+        <div class="financing-content">
+          <h3>Equipment Financing</h3>
+          <p>Upgrade Or Expand With Ease.</p>
+          <div class="financing-features">
+            <div class="financing-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>100% equipment financing</span>
+            </div>
+            <div class="financing-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Fixed monthly payments</span>
+            </div>
+            <div class="financing-feature">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Tax benefits available</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="benefits-cards">
+    <div class="benefit-card">
+      <h3>Fast Approval</h3>
+      <p>Receive Funding Within 24 Hours To Meet Your Business Needs Quickly.</p>
+    </div>
+    <div class="benefit-card">
+      <h3>Flexible Funding</h3>
+      <p>Get Access To $5,000 Up To $500,000, Tailored To Your Business's Growth.</p>
+    </div>
+    <div class="benefit-card">
+      <h3>Transparent Terms</h3>
+      <p>Enjoy No Hidden Fees Or Collateral—What You See Is What You Get.</p>
+    </div>
+    <div class="benefit-card">
+      <h3>Credit-Friendly</h3>
+      <p>Your Credit Score Remains Unaffected When Applying For Funding.</p>
+    </div>
+    <div class="benefit-card">
+      <h3>Easy Eligibility</h3>
+      <p>Just 6+ Months In Business And $10,000+ Monthly Revenue To Qualify.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">
+      <img src="CPF-LOGO-TRACE-SMALL.svg" alt="CapitalFlow Solutions Logo">
+    </div>
+    <div class="legal-text">
+      <p class="security-note">🔒 SSL Secured | We use bank-level security to keep your data safe.</p>
+      <br>
+      <p>By submitting this form, you ("the Applicant") authorize <a href="https://capitalflowsolutions.ca" class="company-name">CapitalFlow Solutions</a> and its affiliates ("Recipients") to obtain and review personal, business, and financial information, including credit reports, bank statements, and other necessary data, for the purpose of evaluating your application for financing or related services ("Transactions").</p>
+      <br>
+      <p>You consent to <a href="https://capitalflowsolutions.ca" class="company-name">CapitalFlow Solutions</a> sharing this information with its Recipients to process your application efficiently. Additionally, by providing your contact details, you agree to receive communication via calls, SMS, or emails related to your application. Standard messaging rates may apply.</p>
+      <br>
+      <p>If you do not wish to receive marketing communications, please refrain from providing a mobile phone number.</p>
+      <br>
+      <p class="acknowledgment">Acknowledgment: By submitting, you confirm your understanding and acceptance of these terms.</p>
+    </div>
+    <div class="copyright">
+      Copyright © 2025 All Rights Reserved by <a href="https://capitalflowsolutions.ca" class="company-name">CapitalFlow Solutions</a>
+      <span>•</span>
+      <a href="/privacy">Privacy Policy</a>
+      <span>•</span>
+      Call: <a href="tel:6473937991">(647) 393-7991</a>
+      <span>•</span>
+      <a href="mailto:info@capitalflowsolutions.ca">info@capitalflowsolutions.ca</a>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById('multiForm');
+    const slides = document.querySelectorAll('.slide');
+    const progress = document.getElementById('progress');
+    const backBtn = document.getElementById('backBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let currentStep = 0;
+    const totalSteps = slides.length;
+
+    function showStep(index) {
+      slides.forEach((s, i) => s.classList.toggle('active', i === index));
+      backBtn.style.display = index === 0 ? 'none' : 'block';
+      nextBtn.textContent = index === totalSteps-1 ? 'Submit' : 'Next';
+      progress.style.width = ((index+1)/totalSteps*100)+'%';
+    }
+
+    function validateStep() {
+      const fields = slides[currentStep].querySelectorAll('input[required], select[required]');
+      let valid = true;
+      fields.forEach(f => {
+        if (!f.checkValidity()) {
+          f.classList.remove('error');
+          void f.offsetWidth;
+          f.classList.add('error');
+          valid = false;
+        } else {
+          f.classList.remove('error');
+        }
+      });
+      return valid;
+    }
+
+    // Remove error on input/change
+    form.querySelectorAll('input, select').forEach(el => {
+      el.addEventListener('input', () => el.classList.remove('error'));
+      el.addEventListener('change', () => el.classList.remove('error'));
+    });
+
+    backBtn.addEventListener('click', () => { currentStep--; showStep(currentStep); });
+    nextBtn.addEventListener('click', () => {
+      if (!validateStep()) return;
+      if (currentStep < totalSteps-1) {
+        currentStep++; showStep(currentStep);
+      } else {
+        form.submit();
+      }
+    });
+
+    // Initialize business address visibility
+    document.getElementById('bizAddressFields').style.display = 'none';
+    
+    document.getElementById('sameAddress').addEventListener('change', function() {
+      document.getElementById('bizAddressFields').style.display = this.checked ? 'none' : 'block';
+      
+      // Clear business address fields when hiding them
+      if (this.checked) {
+        const bizFields = document.querySelectorAll('#bizAddressFields input');
+        bizFields.forEach(field => field.value = '');
+      }
+    });
+
+    showStep(currentStep);
+
+    // Simple signature pad implementation
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    function initCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      e.preventDefault();
+      
+      const rect = canvas.getBoundingClientRect();
+      const x = e.type.includes('touch') 
+        ? e.touches[0].clientX - rect.left 
+        : e.clientX - rect.left;
+      const y = e.type.includes('touch') 
+        ? e.touches[0].clientY - rect.top 
+        : e.clientY - rect.top;
+
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+
+      [lastX, lastY] = [x, y];
+    }
+
+    function startDrawing(e) {
+      isDrawing = true;
+      const rect = canvas.getBoundingClientRect();
+      lastX = e.type.includes('touch') 
+        ? e.touches[0].clientX - rect.left 
+        : e.clientX - rect.left;
+      lastY = e.type.includes('touch') 
+        ? e.touches[0].clientY - rect.top 
+        : e.clientY - rect.top;
+    }
+
+    function stopDrawing() {
+      isDrawing = false;
+    }
+
+    // Initialize canvas
+    initCanvas();
+    window.addEventListener('resize', initCanvas);
+
+    // Mouse events
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+
+    // Touch events
+    canvas.addEventListener('touchstart', startDrawing);
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchend', stopDrawing);
+
+    // Clear button
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    // Language switcher
+    const langSwitch = document.getElementById('langSwitch');
+    const languages = ['EN', 'FR'];
+    let currentLangIndex = 0;
+
+    langSwitch.addEventListener('click', () => {
+      currentLangIndex = (currentLangIndex + 1) % languages.length;
+      langSwitch.textContent = languages[currentLangIndex];
+      // Here you can add logic to switch the actual language content
+    });
+  </script>
+</body>
+</html>
